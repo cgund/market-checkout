@@ -1,3 +1,5 @@
+package market;
+
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,8 +19,8 @@ public class Resources
     {
         try
         {
-            icons.addAll(new Image(Resources.class.getResourceAsStream("icon-small.png")),
-                    new Image(Resources.class.getResourceAsStream("icon.png")));
+            icons.addAll(new Image(Resources.class.getResourceAsStream("resources/icon-small.png")),
+                    new Image(Resources.class.getResourceAsStream("resources/icon.png")));
         }
         catch(NullPointerException ex)
         {

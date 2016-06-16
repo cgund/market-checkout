@@ -1,3 +1,5 @@
+package market;
+
 /*
 Class to represent a natural ordering of paired items
 */

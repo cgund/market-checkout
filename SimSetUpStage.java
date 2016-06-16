@@ -1,3 +1,5 @@
+package market;
+
 
 import java.time.LocalTime;
 import javafx.collections.FXCollections;
@@ -18,6 +20,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /*
@@ -73,6 +76,8 @@ public class SimSetUpStage
         stage.setTitle("Sim Setup");
         stage.getIcons().addAll(Resources.getIcons());
         stage.setScene(scene);
+        stage.setResizable(false);
+        stage.initModality(Modality.APPLICATION_MODAL);
         stage.show();      
     }
     

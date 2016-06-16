@@ -1,3 +1,5 @@
+package market;
+
 
 import java.security.SecureRandom;
 import java.time.LocalTime;
@@ -88,7 +90,7 @@ public class CheckOutAreaStage
     private int leftQrow = 0;
     
     private static final Insets DEFAULT_INSETS = new Insets(10, 10, 10, 10);
-    private final Stage stage;
+    protected static Stage stage;
     private final BorderPane root;
     private final Scene scene;
 
@@ -516,13 +518,13 @@ public class CheckOutAreaStage
             stage.close();
         });
         
-        Button btnReport = new Button("Report");
+        Button btnReport = new Button("View Report");
         btnReport.setOnAction(e ->
         {
             SimReportStage report = new SimReportStage(hmQs, customersPerMinute, numTotalQs, 
                     maxSuperExItems, maxExItems, maxSelfItems, startTime, endTime, 
                     simulationTimeSeconds);
-            report.generateReport();
+            report.viewReport();
         });
         
         HBox hbButton = new HBox(10);

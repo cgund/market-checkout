@@ -1,3 +1,5 @@
+package market;
+
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -15,6 +17,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /*
@@ -41,6 +44,7 @@ public class MainStage extends Application
         primaryStage.setTitle("Checkout Sim");
         primaryStage.getIcons().addAll(Resources.getIcons());
         primaryStage.setScene(scene);
+        primaryStage.setResizable(false);
         primaryStage.show();
         
     }
@@ -52,7 +56,7 @@ public class MainStage extends Application
         hbTitle.setPadding(DEFAULT_INSETS);
         Label lblTitle = new Label("Main Menu");
         lblTitle.setFont(Font.font(null, FontWeight.BOLD, 12));
-        Image imgHelp = new Image(getClass().getResourceAsStream("about.png"));
+        Image imgHelp = new Image(getClass().getResourceAsStream("resources/about.png"));
         ImageView imgViewHelp = new ImageView(imgHelp);
         imgViewHelp.setFitWidth(15);
         imgViewHelp.setPreserveRatio(true);
@@ -113,7 +117,7 @@ public class MainStage extends Application
     {
         try
         {
-            Image imgCart = new Image(getClass().getResourceAsStream("icon.png"));
+            Image imgCart = new Image(getClass().getResourceAsStream("resources/icon.png"));
             ImageView imgViewCart = new ImageView(imgCart);
             imgViewCart.setFitWidth(60);
             imgViewCart.setPreserveRatio(true);

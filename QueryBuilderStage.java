@@ -1,3 +1,5 @@
+package market;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,6 +29,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /*
@@ -70,6 +73,8 @@ public class QueryBuilderStage
         Scene scene = new Scene(root, 900, 675);
         stage.setScene(scene);
         stage.getIcons().addAll(Resources.getIcons());
+        stage.setResizable(false);
+        stage.initModality(Modality.APPLICATION_MODAL);
         stage.setTitle("Query Builder");
       
         root.setCenter(createGridPanes(scene));
@@ -255,7 +260,10 @@ public class QueryBuilderStage
             }
 
             if (noDuplicates)
-                QueryResultsStage.selectDynamicQuery(SELECT, FROM, WHERE);                
+            {
+                DataBaseBridge database = new DataBaseBridge();
+                database.buildDynamicQuery(SELECT, FROM, WHERE);
+            }
             else
                 displayAlert("Duplicate Entries", "Duplicate Fields Detected");
         }

@@ -1,9 +1,14 @@
+package market;
 
+
+import java.sql.SQLException;
 import java.time.LocalTime;
 import java.util.Map;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
@@ -13,6 +18,7 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /*
@@ -26,7 +32,7 @@ public class SimReportStage
     private final LocalTime end;
     private final QGroup allQs;
     private final GridPane gpReport;
-    private final QueryResultsStage db;
+    private DataBaseBridge db = null;
     private final Insets insets = new Insets(10, 10, 10, 10);
     private final BorderPane root;
     private Scene scene;
@@ -41,7 +47,6 @@ public class SimReportStage
             LocalTime start, LocalTime end, long simTime)
     {
         this.mapQTypes = mapQTypes;
-        db = new QueryResultsStage();
         
         this.custPerMin = customersPerMinute;
         this.start = start;
@@ -60,15 +65,21 @@ public class SimReportStage
         
         gpReport = new GridPane();
         
-        Button btnClose = new Button("Close");
-        btnClose.setOnAction(e ->
+        Button btnSave = new Button("Save and Close");
+        btnSave.setOnAction(e ->
+        {
+            saveReport();
+        });
+        
+        Button btnCancel = new Button("Cancel");
+        btnCancel.setOnAction(e ->
         {
             stage.close();
         });
         HBox hbButtons = new HBox(10);
         hbButtons.setAlignment(Pos.CENTER);
         hbButtons.setPadding(insets);
-        hbButtons.getChildren().addAll(btnClose);
+        hbButtons.getChildren().addAll(btnSave, btnCancel);
         
         root = new BorderPane();
         root.setTop(gpTitle);
@@ -76,7 +87,7 @@ public class SimReportStage
         root.setBottom(hbButtons);
     }
     
-    public void generateReport()
+    public void viewReport()
     {
         gpReport.setAlignment(Pos.TOP_CENTER);
         gpReport.setPadding(insets);
@@ -86,14 +97,13 @@ public class SimReportStage
         int numColumns = createColumnHeaders();
         int numRows = createRowHeaders();
         displayData();
-        insertSimData();
-        insertQGroupData();
-        insertQData();
         scene = new Scene(root, numColumns * 125, numRows * 75);
         gpReport.setPrefWidth(scene.getWidth() - 20);
         stage.getIcons().addAll(Resources.getIcons());
         stage.setScene(scene);
         stage.setTitle("Results");
+        stage.setResizable(false);
+        stage.initModality(Modality.APPLICATION_MODAL);
         stage.show();
     }
     
@@ -167,12 +177,6 @@ public class SimReportStage
         gpReport.add(hbHeader, colNum, 0); 
         colNum++;
         
-//        for (int i = 0; i < colNum; i++)
-//        {
-//            ColumnConstraints column = new ColumnConstraints();
-//            column.setPercentWidth(100 / colNum);
-//            gpReport.getColumnConstraints().add(column);            
-//        }
         return colNum;
     }
     
@@ -249,7 +253,39 @@ public class SimReportStage
         gpReport.add(allQs.getNumAbandonedCartsFormatted(), colNum, rowNum++);    
     }
     
-    public void insertSimData()
+    private void saveReport()
+    {
+        db = new DataBaseBridge();
+        try
+        {
+            db.createInsertStatements();
+            insertSimData();
+            insertQGroupData();
+            insertQData();
+            alert("Saved", "Results saved to database");            
+        }
+        catch (SQLException ex)
+        {
+            ex.printStackTrace();
+            alert("Not saved", ex.getMessage());
+        }
+    }
+    
+    private void alert(String title, String content)
+    {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.show();
+        alert.setOnCloseRequest(e ->
+        {
+            stage.close();
+            CheckOutAreaStage.stage.close();
+        });
+    }
+    
+    private void insertSimData() throws SQLException
     {
         Integer[] numQTypes = new Integer[qTypes.length];
         for (int i = 0; i < qTypes.length; i++)
@@ -276,7 +312,7 @@ public class SimReportStage
                 avgWaitTime, avgQLength, numSelfQs, start, end, custPerMin);
     }
     
-    public void insertQGroupData()
+    private void insertQGroupData() throws SQLException
     {
         for (String qType: qTypes)
         {
@@ -300,7 +336,7 @@ public class SimReportStage
         }
     }
     
-    public void insertQData()
+    private void insertQData() throws SQLException
     { 
         for (String qType: qTypes)
         {
